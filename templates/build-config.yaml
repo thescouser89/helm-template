@@ -1,0 +1,40 @@
+{{- if .Values.buildConfig }}
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  labels:
+    app: {{ .Values.global.app_name }}
+  name: {{ .Values.global.app_name }}
+spec:
+  nodeSelector: null
+  output:
+    imageLabels:
+    - name: com.redhat.paas.appcode
+      value: {{ .Values.global.cmdb_code }}
+    to:
+      kind: DockerImage
+      name: {{ .Values.buildConfig.image.destination }}
+  postCommit: {}
+  runPolicy: Serial
+  source:
+    contextDir: apps/ett/main
+    git:
+      ref: master
+      uri: "git-repo-insert-here"
+    sourceSecret:
+      name: rh-it-root-ca
+    type: Git
+  strategy:
+    dockerStrategy:
+      from:
+        kind: ImageStreamTag
+        name: base-image-insert-here
+    type: Docker
+  triggers:
+  - generic:
+      secret: ett-trigger
+    type: Generic
+  # when base image changes, start a rebuild
+  - imageChange: {}
+    type: "ImageChange"
+{{ end }}

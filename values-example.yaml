@@ -1,0 +1,7 @@
+global:
+  app_name: test
+  cmdb_code: TEST-001
+
+buildConfig:
+  image:
+    destination: image-destination:latest
